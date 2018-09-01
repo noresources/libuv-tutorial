@@ -11,6 +11,7 @@ void echo_read(uv_stream_t *server, ssize_t nread, const uv_buf_t* buf) {
     }
 
     printf("result: %s\n", buf->base);
+    uv_read_stop(server);
 }
 
 void alloc_buffer(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf) {
@@ -27,7 +28,7 @@ void on_write_end(uv_write_t *req, int status) {
 }
 
 void on_connect(uv_connect_t * req, int status) {
-    if (status == -1) {
+	if (status == -1) {
         fprintf(stderr, "error on_write_end");
         return;
     }
@@ -53,4 +54,5 @@ int main() {
     uv_ip4_addr("0.0.0.0", 7000, &dest);
 
     uv_tcp_connect(connect, socket, (const struct sockaddr*)&dest, on_connect);
+    return uv_run(loop, UV_RUN_DEFAULT);
 }
